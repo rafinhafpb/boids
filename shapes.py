@@ -112,7 +112,7 @@ class Triangle:
     **display**: *None*\n
     Displays the triangle in the active surface (screen).
     """
-    def __init__(self, center:List[int], size:int, color:List[int], width: Optional[int]=1, velocity:List[int]=[0, 0]) -> None:
+    def __init__(self, center:List[int], size:int, color:List[int], width: Optional[int]=1, velocity:int=0) -> None:
         self.center = center
         self.size = size
         self.color = color
@@ -134,12 +134,13 @@ class Triangle:
         self.p3 = (self.center[0] - scale * math.cos(angle3), self.center[1] - scale * math.sin(angle3))
 
     def move_foward(self):
-        new_pos = (self.center[0] - self.velocity[0] * math.cos(self.direction), self.center[1] - self.velocity[1] * math.sin(self.direction))
-        self.center = (new_pos[0] % self.screen.get_width(), new_pos[1] % self.screen.get_height())
+        self.center = (
+            (self.center[0] - self.velocity * math.cos(self.direction)) % self.screen.get_width(),
+            (self.center[1] - self.velocity * math.sin(self.direction)) % self.screen.get_height()
+        )
         self.update()
 
     def display(self):
-        self.update()
         pygame.draw.polygon(self.screen, self.color, (self.p1, self.p2, self.p3), self.width)
 
 class Pointer(Triangle):
@@ -163,8 +164,6 @@ class Pointer(Triangle):
     **display**: *None*\n
     Displays the pointer in the active surface (screen).
     """
-
-
     def update(self):
         scale = 2*self.size/3
         angle1 = self.direction
